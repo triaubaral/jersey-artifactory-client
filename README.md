@@ -1,5 +1,4 @@
-jersey-artifactory-client
-=========================
+#jersey-artifactory-client
 
 Simple jersey client for artifactory
 
@@ -20,15 +19,15 @@ config.setBasicAuth("admin", "password");
 
 Then you can use the utility class ArtifactoryUtils to :
 
-->dowload :
+-dowload :
 ArtifactoryUtils.download(config.getPath(), new File("path/to/downloaded/file"));
 
 
-->upload :
+-upload :
 ArtifactoryUtils.upload(new File("path/to/file/to/upload"), config);
 
 
-->delete :
+-delete :
 ArtifactoryUtils.delete("path/to/file/to/delete", config);
 
 Have a look to the unit test to get more example.
