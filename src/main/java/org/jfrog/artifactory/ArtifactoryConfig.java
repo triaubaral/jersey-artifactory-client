@@ -45,5 +45,11 @@ public class ArtifactoryConfig {
 		
 		return this.homeUrl+"/"+this.repository+"/"+this.path;
 	}
+	@Override
+	public String toString() {
+		return "ArtifactoryConfig [homeUrl=" + homeUrl + ", path=" + path
+				+ ", repository=" + repository + ", username=" + username
+				+ ", password=" + password + "]";
+	}
 
 }
