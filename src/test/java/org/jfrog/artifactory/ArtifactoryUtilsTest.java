@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
@@ -44,11 +45,17 @@ public class ArtifactoryUtilsTest {
 	@Before
 	public void init(){
 		
+		logger.info("Settings intialisation");
+		
 		settings = new Properties();
 		try {
 			settings.load(this.getClass().getResourceAsStream("/settings.properties"));
 		} catch (IOException e) {
 			logger.error(e.getStackTrace());
+		}
+		
+		if(logger.isDebugEnabled()){
+			showParameters();
 		}
 		
 		artifactToDownload = new File(getSetting(SettingsKey.PATH_LOCAL_TEST_JAR));
@@ -57,21 +64,16 @@ public class ArtifactoryUtilsTest {
 		username = getSetting(SettingsKey.USERNAME);
 		password = getSetting(SettingsKey.PASSWORD);
 		
+		logger.info("ArtifactoryConfig object intialisation");
 		config = new ArtifactoryConfig();		
 		config.setHomeUrl(getSetting(SettingsKey.ARTIFACTORY_URL));		
 		config.setRepository(getSetting(SettingsKey.REPOSITORY));
 		config.setPath(getSetting(SettingsKey.PATH));
-		config.setBasicAuth(username, password);
-	}	
-	
-	private String getSetting(final SettingsKey pKey){		
-		return settings.getProperty(pKey.name());
-	}
-	
-	private String getWebResourcePath(){
+		config.setBasicAuth(username, password);		
 		
-		return getSetting(SettingsKey.ARTIFACTORY_URL)+"/"+getSetting(SettingsKey.REPOSITORY)+"/"+getSetting(SettingsKey.PATH);
-	}
+		logger.debug(config);
+		
+	}	
 	
 	@Test
 	public void testEmptyFileUpload(){		
@@ -81,6 +83,8 @@ public class ArtifactoryUtilsTest {
 	@Test	
 	public void testWrongHomeUrlFileUpload(){	
 		
+		logger.info("testWrongHomeUrlFileUpload");
+		
 		try{
 			config.setHomeUrl(getSetting(SettingsKey.WRONG_ARTIFACTORY_URL));		
 			testUpload(artifactToUpload, config);
@@ -88,13 +92,16 @@ public class ArtifactoryUtilsTest {
 		}
 		catch(ArtifactoryUtilsException e){
 			assertEquals(405,e.getStatus());
-			logger.error(e.getStatus() +" "+ e.getMessage());
+			logger.info("Expected message error :"+e.getStatus() +" "+ e.getMessage());
 		}
 		
 	}
 	
 	@Test
 	public void testWrongRepositoryFileUpload(){
+		
+		logger.info("testWrongRepositoryFileUpload");
+		
 		try{
 			config.setRepository(getSetting(SettingsKey.WRONG_REPOSITORY));
 			testUpload(artifactToUpload, config);
@@ -102,12 +109,13 @@ public class ArtifactoryUtilsTest {
 		}
 		catch(ArtifactoryUtilsException e){
 			assertEquals(403,e.getStatus());
-			logger.error(e.getStatus() +" "+ e.getMessage());
+			logger.info("Expected message error :"+e.getStatus() +" "+ e.getMessage());
 		}
 	}
 	
 	@Test
-	public void testWrongPathFileUpload(){			
+	public void testWrongPathFileUpload(){
+		logger.info("testWrongPathFileUpload");
 		config.setPath(getSetting(SettingsKey.WRONG_PATH));
 		testUpload(artifactToUpload, config);		
 		//A path is created at the wrong path and it does not throw any error.		
@@ -115,6 +123,7 @@ public class ArtifactoryUtilsTest {
 	
 	@Test
 	public void testWrongBasicAuthFileUpload(){
+		logger.info("testWrongBasicAuthFileUpload");
 		try{
 			config.setBasicAuth(getSetting(SettingsKey.WRONG_LOGIN),getSetting(SettingsKey.WRONG_PASSWORD));
 			testUpload(artifactToUpload, config);
@@ -122,37 +131,34 @@ public class ArtifactoryUtilsTest {
 		}
 		catch(ArtifactoryUtilsException e){
 			assertEquals(401,e.getStatus());
-			logger.error(e.getStatus() +" "+ e.getMessage());			
+			logger.info("Expected message error :"+e.getStatus() +" "+ e.getMessage());			
 		}
 	}
 	
 	@Test
 	public void testEmptyConfigFileUpload(){
+		logger.info("testEmptyConfigFileUpload");
 		try{
 			testUpload(artifactToUpload, null);
 			fail("Should have thrown ArtifactoryUtilsException for EMPTY CONFIG FILE");
 		}
 		catch(ArtifactoryUtilsException e){
 			assertEquals(0,e.getStatus());
-			logger.error(e.getMessage());
+			logger.info("Expected message error :"+e.getMessage());
 		}
 	}
 	
 	@Test
-	public void testRegularUpload() {		
+	public void testRegularUpload() {	
+		logger.info("testRegularUpload");
 		testUpload(artifactToUpload, config);
 	}
 	
-	private void testUpload(final File pfile, final ArtifactoryConfig pConfig){		
-						
-		ClientResponse response = ArtifactoryUtils.upload(pfile, pConfig);
-		
-		assertEquals(201,response.getStatus());		
-	}
+	
 	
 	@Test
 	public void testUnknwownArtifactDownload(){
-		
+		logger.info("testUnknwownArtifactDownload");
 		try{
 		
 			doDownload(getWebResourcePath()+"/"+getSetting(SettingsKey.WRONG_PATH)+"*è/''");
@@ -160,17 +166,30 @@ public class ArtifactoryUtilsTest {
 		}
 		catch(ArtifactoryUtilsException e){
 			assertEquals(404,e.getStatus());
-			logger.error(e.getMessage());
+			logger.info(e.getMessage());
 		}
 	}
 	
 	
 	@Test
-	public void testRegularDownload(){		
+	public void testRegularDownload(){	
+		logger.info("testRegularDownload");
 		final File artifactDownloaded = doDownload(getWebResourcePath());
 		assertNotNull(artifactDownloaded);
 		assertEquals(artifactToDownload.length(), artifactDownloaded.length());
 		FileUtils.deleteQuietly(artifactDownloaded);
+	}
+	
+	@Test
+	public void testRegularDelete(){
+		logger.info("testRegularDelete");		
+		final String workingUrl = getSetting(SettingsKey.ARTIFACTORY_URL)+"/"+getSetting(SettingsKey.REPOSITORY)+"/";
+		logger.debug("WorkingUrl ="+workingUrl);
+		ClientResponse response1 = ArtifactoryUtils.delete(workingUrl+getSetting(SettingsKey.RESOURCE_TO_DELETE), config);
+		ClientResponse response2 = ArtifactoryUtils.delete(workingUrl+getSetting(SettingsKey.WRONG_PATH), config);
+		assertEquals(204,response1.getStatus());
+		assertEquals(204,response2.getStatus());
+		
 	}
 	
 	private File doDownload(final String pWebResoucePath){
@@ -185,17 +204,28 @@ public class ArtifactoryUtilsTest {
 		
 	}	
 	
+	private void testUpload(final File pfile, final ArtifactoryConfig pConfig){		
+		ClientResponse response = ArtifactoryUtils.upload(pfile, pConfig);		
+		assertEquals(201,response.getStatus());		
+	}
 	
-	@Test
-	public void testRegularDelete(){
-		final String workingUrl = getSetting(SettingsKey.ARTIFACTORY_URL)+"/"+getSetting(SettingsKey.REPOSITORY)+"/";
-		ClientResponse response1 = ArtifactoryUtils.delete(workingUrl+getSetting(SettingsKey.RESOURCE_TO_DELETE), config);
-		ClientResponse response2 = ArtifactoryUtils.delete(workingUrl+getSetting(SettingsKey.WRONG_PATH), config);
-		assertEquals(204,response1.getStatus());
-		assertEquals(204,response2.getStatus());
-		
-	}	
+	private String getSetting(final SettingsKey pKey){	
+		logger.debug("Get setting for key :"+pKey);
+		return settings.getProperty(pKey.name());
+	}
 	
-
+	private String getWebResourcePath(){
+		final String webResourcePath =  getSetting(SettingsKey.ARTIFACTORY_URL)+"/"+getSetting(SettingsKey.REPOSITORY)+"/"+getSetting(SettingsKey.PATH);
+		logger.debug("Get WebResourcePath :"+webResourcePath);
+		return webResourcePath;
+	}
+	
+	private void showParameters(){
+		logger.debug("====== Properties from settings.properties =====");
+		for(Entry<Object, Object> property : this.settings.entrySet()){
+			logger.debug(property.getKey()+"="+property.getValue());
+		}
+		logger.debug("================================================");
+	}
 	
 }
