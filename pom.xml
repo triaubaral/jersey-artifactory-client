@@ -42,7 +42,16 @@
 			<version>1.7.5</version>
 		</dependency>
                           
-  </dependencies>  
+  </dependencies> 
+
+	<distributionManagement>
+	    <snapshotRepository>
+	        <id>aurelien-SATELLITE-C870-133</id>
+	        <name>aurelien-SATELLITE-C870-133-snapshots</name>
+	        <url>http://localhost:8081/artifactory/libs-snapshot-local</url>
+	    </snapshotRepository>
+	</distributionManagement>
+
   <build>
     <plugins>
       <plugin>
@@ -54,6 +63,12 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>2.1</version>
+      </plugin>
     </plugins>
-  </build>
+  </build>  
+  
 </project>
