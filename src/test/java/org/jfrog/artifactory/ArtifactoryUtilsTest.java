@@ -10,7 +10,9 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,15 +22,14 @@ public class ArtifactoryUtilsTest {
 	
 	private static Logger logger = Logger.getLogger(ArtifactoryUtilsTest.class);
 		
-	private File artifactToDownload;
-	private File artifactToUpload;
+	private static File testArtifact;
 	private String username;
 	private String password;
 	private ArtifactoryConfig config;
 	private Properties settings; 
 	private enum SettingsKey{
 		ARTIFACTORY_URL,
-		PATH_LOCAL_TEST_JAR,
+		INPUT_JAR,
 		USERNAME,
 		PASSWORD,
 		REPOSITORY,
@@ -39,7 +40,7 @@ public class ArtifactoryUtilsTest {
 		WRONG_LOGIN,
 		WRONG_PASSWORD,
 		RESOURCE_TO_DELETE,
-		PATH_TO_DOWNLOADED_RESOURCE;		
+		OUTPUT_JAR;		
 	}
 			
 	@Before
@@ -58,9 +59,10 @@ public class ArtifactoryUtilsTest {
 			showParameters();
 		}
 		
-		artifactToDownload = new File(getSetting(SettingsKey.PATH_LOCAL_TEST_JAR));
-		artifactToUpload = new File(getSetting(SettingsKey.PATH_LOCAL_TEST_JAR));
+		testArtifact = new File(getSetting(SettingsKey.OUTPUT_JAR));		
 		
+		initFile(testArtifact, getSetting(SettingsKey.INPUT_JAR));
+		  
 		username = getSetting(SettingsKey.USERNAME);
 		password = getSetting(SettingsKey.PASSWORD);
 		
@@ -87,7 +89,7 @@ public class ArtifactoryUtilsTest {
 		
 		try{
 			config.setHomeUrl(getSetting(SettingsKey.WRONG_ARTIFACTORY_URL));		
-			testUpload(artifactToUpload, config);
+			testUpload(testArtifact, config);
 			fail("Should have thrown ArtifactoryUtilsException for wrong ARTIFACTORY_URL");
 		}
 		catch(ArtifactoryUtilsException e){
@@ -104,7 +106,7 @@ public class ArtifactoryUtilsTest {
 		
 		try{
 			config.setRepository(getSetting(SettingsKey.WRONG_REPOSITORY));
-			testUpload(artifactToUpload, config);
+			testUpload(testArtifact, config);
 			fail("Should have thrown ArtifactoryUtilsException for wrong REPOSITORY");
 		}
 		catch(ArtifactoryUtilsException e){
@@ -117,7 +119,7 @@ public class ArtifactoryUtilsTest {
 	public void testWrongPathFileUpload(){
 		logger.info("testWrongPathFileUpload");
 		config.setPath(getSetting(SettingsKey.WRONG_PATH));
-		testUpload(artifactToUpload, config);		
+		testUpload(testArtifact, config);		
 		//A path is created at the wrong path and it does not throw any error.		
 	}
 	
@@ -126,7 +128,7 @@ public class ArtifactoryUtilsTest {
 		logger.info("testWrongBasicAuthFileUpload");
 		try{
 			config.setBasicAuth(getSetting(SettingsKey.WRONG_LOGIN),getSetting(SettingsKey.WRONG_PASSWORD));
-			testUpload(artifactToUpload, config);
+			testUpload(testArtifact, config);
 			fail("Should have thrown ArtifactoryUtilsException for wrong LOGIN/PASSWORD");
 		}
 		catch(ArtifactoryUtilsException e){
@@ -139,7 +141,7 @@ public class ArtifactoryUtilsTest {
 	public void testEmptyConfigFileUpload(){
 		logger.info("testEmptyConfigFileUpload");
 		try{
-			testUpload(artifactToUpload, null);
+			testUpload(testArtifact, null);
 			fail("Should have thrown ArtifactoryUtilsException for EMPTY CONFIG FILE");
 		}
 		catch(ArtifactoryUtilsException e){
@@ -151,7 +153,7 @@ public class ArtifactoryUtilsTest {
 	@Test
 	public void testRegularUpload() {	
 		logger.info("testRegularUpload");
-		testUpload(artifactToUpload, config);
+		testUpload(testArtifact, config);
 	}
 	
 	
@@ -176,7 +178,7 @@ public class ArtifactoryUtilsTest {
 		logger.info("testRegularDownload");
 		final File artifactDownloaded = doDownload(getWebResourcePath());
 		assertNotNull(artifactDownloaded);
-		assertEquals(artifactToDownload.length(), artifactDownloaded.length());
+		assertEquals(testArtifact.length(), artifactDownloaded.length());
 		FileUtils.deleteQuietly(artifactDownloaded);
 	}
 	
@@ -195,7 +197,7 @@ public class ArtifactoryUtilsTest {
 	private File doDownload(final String pWebResoucePath){
 		final String pathWebResouce = pWebResoucePath;
 		
-		final File fileDestination = new File(getSetting(SettingsKey.PATH_TO_DOWNLOADED_RESOURCE));	
+		final File fileDestination = new File(getSetting(SettingsKey.OUTPUT_JAR));
 		
 		if(fileDestination.exists())
 			FileUtils.deleteQuietly(fileDestination);
@@ -204,7 +206,17 @@ public class ArtifactoryUtilsTest {
 		
 	}	
 	
+	private void initFile(final File pFileToFill, final String pPathInputStream){
+		
+		try {
+			FileUtils.write(pFileToFill, IOUtils.toString(this.getClass().getResourceAsStream(pPathInputStream)));
+		} catch (IOException e) {			
+			logger.error(e);
+		}
+	}
+	
 	private void testUpload(final File pfile, final ArtifactoryConfig pConfig){		
+		
 		ClientResponse response = ArtifactoryUtils.upload(pfile, pConfig);		
 		assertEquals(201,response.getStatus());		
 	}
@@ -226,6 +238,13 @@ public class ArtifactoryUtilsTest {
 			logger.debug(property.getKey()+"="+property.getValue());
 		}
 		logger.debug("================================================");
+	}
+	
+	@AfterClass
+	public static void afterClass(){
+		
+		FileUtils.deleteQuietly(testArtifact);
+		
 	}
 	
 }
