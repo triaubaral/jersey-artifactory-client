@@ -79,8 +79,9 @@ public final class ArtifactoryUtils {
 			
 		final Client client = Client.create();
 		
-		if(logger.isDebugEnabled())
+		if(logger.isDebugEnabled()){
 			client.addFilter(new LoggingFilter());
+		}
 		
 		client.addFilter(new com.sun.jersey.api.client.filter.HTTPBasicAuthFilter(pConfig.getUsername(), pConfig.getPassword()));
  	
