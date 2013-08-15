@@ -42,9 +42,10 @@ public final class ArtifactoryUtils {
 		
 		final Client client = Client.create();
 		
-		if(logger.isDebugEnabled())
+		if(logger.isDebugEnabled()){
 			client.addFilter(new LoggingFilter());
-		 
+		}
+		
 		final WebResource webResource = client.resource(pPathToWebResource);
  
 		final ClientResponse response = webResource.accept("application/zip").get(ClientResponse.class);
