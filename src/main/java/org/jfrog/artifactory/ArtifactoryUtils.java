@@ -21,6 +21,8 @@ import com.sun.jersey.api.client.filter.LoggingFilter;
  */
 public final class ArtifactoryUtils {	
 	
+	private ArtifactoryUtils(){}
+	
 	static{	
 		//Remove all jersey logging strategy with java.util.logging 
 		//then it will be manage by log4j.
