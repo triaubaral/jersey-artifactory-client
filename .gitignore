@@ -1,6 +1,9 @@
 .project
 .classpath
 .settings
+.pmd
+/reports
+/output
 /target
 /log
 /bin
