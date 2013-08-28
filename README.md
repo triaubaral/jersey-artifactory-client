@@ -11,7 +11,7 @@ Here a simple example in order to show you how it works
 
 First you need to create an object that extends ParameterBuilder object like this :
 
-public class DefautParameterBuilder extends ParameterBuilder {
+	public class DefautParameterBuilder extends ParameterBuilder {
 
 	@Override
 	public void buildHomeUrl() {
@@ -39,7 +39,7 @@ public class DefautParameterBuilder extends ParameterBuilder {
 		parameter.setPassword("password");
 	}
 
-}
+	}
 
 
 Then you need to set an ArtifactoryAPI object :
