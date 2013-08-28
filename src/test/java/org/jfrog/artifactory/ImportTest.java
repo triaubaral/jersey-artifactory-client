@@ -15,11 +15,9 @@ import org.jfrog.artifactory.param.WrongRepositoryParamBuilder;
 import org.junit.AfterClass;
 import org.junit.Test;
 
-import com.sun.jersey.api.client.ClientResponse;
-
-public class UploadTest extends ArtifactoryUtilsTest{
+public class ImportTest extends ArtifactoryUtilsTest{
 	
-	private static Logger logger = Logger.getLogger(UploadTest.class);	
+	private static Logger logger = Logger.getLogger(ImportTest.class);	
 	
 	@Test
 	public void testEmptyFileUpload(){		
@@ -78,8 +76,8 @@ public class UploadTest extends ArtifactoryUtilsTest{
 	}
 	
 	@Test
-	public void testRegularUpload() {	
-		logger.info("testRegularUpload");
+	public void testRegularImport() {	
+		logger.info("testRegularImport");
 		testUpload(testArtifact, artifactoryAPI);
 	}
 	
@@ -99,9 +97,7 @@ public class UploadTest extends ArtifactoryUtilsTest{
 	}
 	
 	private void testUpload(final File pfile, final ArtifactoryAPI pPartifactoryAPI){		
-		
-		ClientResponse response = pPartifactoryAPI.upload(pfile);		
-		assertEquals(201,response.getStatus());		
+		pPartifactoryAPI.importFrom(pfile);		
 	}	
 	
 }

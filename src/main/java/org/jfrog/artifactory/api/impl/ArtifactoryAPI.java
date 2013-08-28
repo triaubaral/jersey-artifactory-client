@@ -58,24 +58,23 @@ public final class ArtifactoryAPI {
 	
 	/**
 	 * Download a file from artifactory
-	 * @param pPathToWebResource path to artifact to download
 	 * @param pFileDestination path to store the downloaded artifact
 	 * @return File downloaded
 	 */
-	public File download(final String pPathToWebResource, final File pFileDestination){
+	public File exportTo(final File pFileDestination){
 		
 		if(logger.isDebugEnabled()){
 			client.addFilter(new LoggingFilter());
 		}
 		
-		final WebResource webResource = client.resource(pPathToWebResource);
+		final WebResource webResource = client.resource(params.getWebResourcePath());
  
 		final ClientResponse response = webResource.accept("application/zip").get(ClientResponse.class);
  
 		final int status = response.getStatus();
 		
 		if (status != 200) {
-		   throw new ArtifactoryUtilsException(status,"The download does not succeed. Please check if the url : "+pPathToWebResource+" is correct.");
+		   throw new ArtifactoryUtilsException(status,"The download does not succeed. Please check if the url : "+this.params.getPath()+" is correct.");
 		}
 		
 		try {
@@ -92,7 +91,7 @@ public final class ArtifactoryAPI {
 	 * @param pFileToUpload file to upload in artifactory.
 	 * @return A jersey ClientResponse object
 	 */
-	public ClientResponse upload(final File pFileToUpload){
+	public void importFrom(final File pFileToUpload){
 		
 		if(logger.isDebugEnabled()){
 			client.addFilter(new LoggingFilter());
@@ -108,9 +107,7 @@ public final class ArtifactoryAPI {
 		
 		if(status != 201){
 			throw new ArtifactoryUtilsException(status,this.params);
-		}
-		
-		return clientResponse;
+		}		
 	}
 	
 	/**
@@ -118,7 +115,7 @@ public final class ArtifactoryAPI {
 	 * @param pWebResourcePath artifact's path to delete
 	 * @return A jersey ClientResponse object
 	 */
-	public ClientResponse delete(final String pWebResourcePath){
+	public void delete(final String pWebResourcePath){
 		
 		if(logger.isDebugEnabled())
 			client.addFilter(new LoggingFilter());
@@ -127,8 +124,13 @@ public final class ArtifactoryAPI {
 					
 		final WebResource webResource = client.resource(pWebResourcePath);			
 					
-		return webResource.delete(ClientResponse.class);
+		final ClientResponse clientResponse =webResource.delete(ClientResponse.class);
 		
+		final int status = clientResponse.getStatus();
+		
+		if(status != 204){
+			throw new ArtifactoryUtilsException(status,this.params);
+		}
 		
 	}
 

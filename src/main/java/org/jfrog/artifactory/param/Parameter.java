@@ -37,10 +37,8 @@ public class Parameter {
 	}
 	public void setPassword(String password) {
 		this.password = password;
-	}
-	
-	public String getWebResourcePath(){
-		
+	}	
+	public String getWebResourcePath(){		
 		return this.homeUrl+"/"+this.repository+"/"+this.path;
 	}
 	

@@ -8,19 +8,22 @@ import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.jfrog.artifactory.api.impl.ArtifactoryAPI;
 import org.jfrog.artifactory.param.SettingsKey;
+import org.jfrog.artifactory.param.WrongPathParamBuilder;
 import org.junit.Test;
 
-public class DownloadTest extends ArtifactoryUtilsTest {
+public class ExportTest extends ArtifactoryUtilsTest {
 
-	private static Logger logger = Logger.getLogger(DownloadTest.class);
+	private static Logger logger = Logger.getLogger(ExportTest.class);
 	
 	@Test
 	public void testUnknwownArtifactDownload(){
 		logger.info("testUnknwownArtifactDownload");
 		try{
-		
-			doDownload(getWebResourcePath()+"/"+settingsLoader.getSetting(SettingsKey.WRONG_PATH)+"*è/''");
+			final ArtifactoryAPI artifactoryAPI = new ArtifactoryAPI(new WrongPathParamBuilder());
+			artifactoryAPI.delete(artifactoryAPI.getParams().getWebResourcePath());									
+			doDownload(artifactoryAPI);
 			fail("Should have thrown ArtifactoryUtilsException for ARTIFACT NOT FOUND");
 		}
 		catch(ArtifactoryUtilsException e){
@@ -33,29 +36,23 @@ public class DownloadTest extends ArtifactoryUtilsTest {
 	@Test
 	public void testRegularDownload(){	
 		logger.info("testRegularDownload");
-		final File artifactDownloaded = doDownload(getWebResourcePath());
+		final File artifactDownloaded = doDownload(artifactoryAPI);
 		assertNotNull(artifactDownloaded);
 		assertEquals(testArtifact.length(), artifactDownloaded.length());
 		FileUtils.deleteQuietly(artifactDownloaded);
 	}
 	
 	
-	private File doDownload(final String pWebResoucePath){
-		final String pathWebResouce = pWebResoucePath;
+	private File doDownload(final ArtifactoryAPI pArtifactoryAPI){
+		
 		
 		final File fileDestination = new File(settingsLoader.getSetting(SettingsKey.OUTPUT_JAR));
 		
 		if(fileDestination.exists())
 			FileUtils.deleteQuietly(fileDestination);
 		
-		return artifactoryAPI.download(pathWebResouce, fileDestination);	
+		return pArtifactoryAPI.exportTo(fileDestination);	
 		
-	}
-	
-	private String getWebResourcePath(){
-		final String webResourcePath =  settingsLoader.getSetting(SettingsKey.ARTIFACTORY_URL)+"/"+settingsLoader.getSetting(SettingsKey.REPOSITORY)+"/"+settingsLoader.getSetting(SettingsKey.PATH);
-		logger.debug("Get WebResourcePath :"+webResourcePath);
-		return webResourcePath;
-	}
+	}	
 
 }

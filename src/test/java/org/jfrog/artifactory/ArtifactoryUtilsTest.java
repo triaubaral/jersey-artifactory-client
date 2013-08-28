@@ -2,15 +2,12 @@ package org.jfrog.artifactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map.Entry;
-import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.jfrog.artifactory.api.impl.ArtifactoryAPI;
 import org.jfrog.artifactory.param.DefautParameterBuilder;
-import org.jfrog.artifactory.param.Parameter;
 import org.jfrog.artifactory.param.SettingsKey;
 import org.jfrog.artifactory.param.SettingsLoader;
 import org.junit.Before;

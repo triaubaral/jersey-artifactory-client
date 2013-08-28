@@ -6,8 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-{ 	UploadTest.class, 
-	DownloadTest.class, 
+{ 	ImportTest.class, 
+	ExportTest.class, 
 	DeleteTest.class
 })
 public class AllTests {
