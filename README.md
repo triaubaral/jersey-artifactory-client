@@ -9,27 +9,56 @@ You can only use it to download, update or delete an artifact.
 
 Here a simple example in order to show you how it works
 
-First you need to set an ArtifactoryConfig object :
+First you need to create an object that extends ParameterBuilder object like this :
 
-	ArtifactoryConfig config = new ArtifactoryConfig();		
-	config.setHomeUrl("http://localhost:8081/artifactory");		
-	config.setRepository("libs-release-local");
-	config.setPath("path/to/artifact");
-	config.setBasicAuth("admin", "password");
+public class DefautParameterBuilder extends ParameterBuilder {
+
+	@Override
+	public void buildHomeUrl() {
+		parameter.setHomeUrl("http://localhost:8081/artifactory");
+		
+	}
+
+	@Override
+	public void buildPath() {
+		parameter.setPath("path/to/artifact");		
+	}
+
+	@Override
+	public void buildRepository() {
+		parameter.setRepository("libs-release-local");		
+	}
+
+	@Override
+	public void buildUsername() {
+		parameter.setUsername("admin");		
+	}
+
+	@Override
+	public void buildPassword() {
+		parameter.setPassword("password");
+	}
+
+}
 
 
-Then you can use the utility class ArtifactoryUtils to :
+Then you need to set an ArtifactoryAPI object :
+
+	ArtifactoryAPI artifactoryAPI = new ArtifactoryAPI(new DefautParameterBuilder());		
+	
+	
+Then you can use the ArtifactoryAPI to :
 
 	//dowload :
-	ArtifactoryUtils.download(config.getPath(), new File("path/to/downloaded/file"));
+	artifactoryAPI.download("path/artifact/to/download", new File("path/to/downloaded/file"));
 	
 	
 	//upload :
-	ArtifactoryUtils.upload(new File("path/to/file/to/upload"), config);
+	artifactoryAPI.upload(new File("path/to/file/to/upload"));
 	
 	
 	//delete :
-	ArtifactoryUtils.delete("path/to/file/to/delete", config);
+	artifactoryAPI.delete("path/to/file/to/delete");
 * * *
 *Have a look to the unit test to get more example.*
 
