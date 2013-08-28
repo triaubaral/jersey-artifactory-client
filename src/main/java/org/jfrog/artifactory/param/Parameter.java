@@ -7,7 +7,14 @@ public class Parameter {
 	private String repository;
 	private String username;
 	private String password;
+	private String headers;
 	
+	public String getHeaders() {
+		return headers;
+	}
+	public void setHeaders(String headers) {
+		this.headers = headers;
+	}
 	public String getHomeUrl() {
 		return homeUrl;
 	}

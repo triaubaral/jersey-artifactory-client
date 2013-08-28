@@ -21,5 +21,6 @@ public abstract class ParameterBuilder {
 	public abstract void buildRepository();
 	public abstract void buildUsername();
 	public abstract void buildPassword();
+	public abstract void buildHeaders();
 
 }

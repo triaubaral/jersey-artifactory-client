@@ -109,6 +109,28 @@ public final class ArtifactoryAPI {
 			throw new ArtifactoryUtilsException(status,this.params);
 		}		
 	}
+
+	public void importFromWithChecksum(final File pFileToUpload){
+		
+		if(logger.isDebugEnabled()){
+			client.addFilter(new LoggingFilter());
+		}
+		
+		client.addFilter(new com.sun.jersey.api.client.filter.HTTPBasicAuthFilter(this.params.getUsername(), this.params.getPassword()));
+ 	
+		//client.addFilter(new com.sun.jersey.api.client.filter);
+		
+		final WebResource webResource = client.resource(this.params.getWebResourcePath());			
+				
+		final ClientResponse clientResponse =  webResource.put(ClientResponse.class, pFileToUpload);
+		
+		final int status = clientResponse.getStatus();
+		
+		if(status != 201){
+			throw new ArtifactoryUtilsException(status,this.params);
+		}		
+	}
+	
 	
 	/**
 	 * Delete a file in artifactory

@@ -83,10 +83,8 @@ public class ImportTest extends ArtifactoryUtilsTest{
 	
 	@Test
 	public void testCheckSumUpload(){
-		logger.info("testCheckSumUpload");
-		
-		
-		
+		logger.info("testCheckSumUpload");		
+		artifactoryAPI.importFromWithChecksum(testArtifact);		
 	}
 	
 	@AfterClass

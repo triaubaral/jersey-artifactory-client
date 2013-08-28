@@ -14,6 +14,7 @@ public enum SettingsKey {
 		WRONG_LOGIN,
 		WRONG_PASSWORD,
 		RESOURCE_TO_DELETE,
+		HEADERS,
 		OUTPUT_JAR;		
 	
 }

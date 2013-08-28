@@ -30,6 +30,12 @@ public class DefautParameterBuilder extends ParameterBuilder {
 		parameter.setPassword(settingsLoader.getSetting(SettingsKey.PASSWORD));
 	}
 
+	@Override
+	public void buildHeaders() {
+		parameter.setPassword(settingsLoader.getSetting(SettingsKey.HEADERS));
+		
+	}
+
 	
 
 }
