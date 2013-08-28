@@ -47,7 +47,7 @@ public class DownloadTest extends ArtifactoryUtilsTest {
 		if(fileDestination.exists())
 			FileUtils.deleteQuietly(fileDestination);
 		
-		return ArtifactoryUtils.download(pathWebResouce, fileDestination);	
+		return artifactoryAPI.download(pathWebResouce, fileDestination);	
 		
 	}
 	

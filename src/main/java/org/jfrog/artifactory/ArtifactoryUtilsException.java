@@ -3,6 +3,8 @@ package org.jfrog.artifactory;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jfrog.artifactory.param.Parameter;
+
 public class ArtifactoryUtilsException extends RuntimeException {	
 	
 	private static final long serialVersionUID = 557686856339703121L;
@@ -23,7 +25,7 @@ public class ArtifactoryUtilsException extends RuntimeException {
 		errorMessage.put(0, "An ArtifactoryResourceWeb object can't be null. Please create one to make it works.");
 	}
 
-	public ArtifactoryUtilsException(final int pStatus, final ArtifactoryConfig pResource) {
+	public ArtifactoryUtilsException(final int pStatus, final Parameter pResource) {
 
 		status = pStatus;
 		errorMessage.put(401, "You did not have the rights to use it with this login : "+pResource.getUsername()+" and password :"+pResource.getPassword());

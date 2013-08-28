@@ -1,4 +1,4 @@
-package org.jfrog.artifactory;
+package org.jfrog.artifactory.api.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,6 +6,9 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.jfrog.artifactory.ArtifactoryUtilsException;
+import org.jfrog.artifactory.param.Parameter;
+import org.jfrog.artifactory.param.ParameterBuilder;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.sun.jersey.api.client.Client;
@@ -19,18 +22,39 @@ import com.sun.jersey.api.client.filter.LoggingFilter;
  * @author Aurélien Tricoire
  *
  */
-public final class ArtifactoryUtils {	
+public final class ArtifactoryAPI {	
 	
-	private ArtifactoryUtils(){}
+	private Parameter params;
 	
-	static{	
+	public Parameter getParams() {
+		return params;
+	}
+
+	@SuppressWarnings("unused")
+	private ArtifactoryAPI(){}
+	
+	public ArtifactoryAPI(final ParameterBuilder pParameterBuilder){
+		pParameterBuilder.createNewParameterProduct();
+		pParameterBuilder.buildHomeUrl();
+		pParameterBuilder.buildRepository();
+		pParameterBuilder.buildPath();
+		pParameterBuilder.buildUsername();
+		pParameterBuilder.buildPassword();		
+		this.params = pParameterBuilder.getParameter();
+	}
+	
+	
+	private static Client client;
+	
+	static{
+		client = Client.create();
 		//Remove all jersey logging strategy with java.util.logging 
 		//then it will be manage by log4j.
 		SLF4JBridgeHandler.removeHandlersForRootLogger();
 		SLF4JBridgeHandler.install();
 	}
 	
-	private static Logger logger = Logger.getLogger(ArtifactoryUtils.class);
+	private static Logger logger = Logger.getLogger(ArtifactoryAPI.class);
 	
 	/**
 	 * Download a file from artifactory
@@ -38,9 +62,7 @@ public final class ArtifactoryUtils {
 	 * @param pFileDestination path to store the downloaded artifact
 	 * @return File downloaded
 	 */
-	public static File download(final String pPathToWebResource, final File pFileDestination){
-		
-		final Client client = Client.create();
+	public File download(final String pPathToWebResource, final File pFileDestination){
 		
 		if(logger.isDebugEnabled()){
 			client.addFilter(new LoggingFilter());
@@ -68,31 +90,24 @@ public final class ArtifactoryUtils {
 	/**
 	 * Upload a file in artifactory
 	 * @param pFileToUpload file to upload in artifactory.
-	 * @param pConfig ArtifactoryConfig that contains artifactory configuration.
 	 * @return A jersey ClientResponse object
 	 */
-	public static ClientResponse upload(final File pFileToUpload, final ArtifactoryConfig pConfig){
-		
-		if(pConfig == null){
-			throw new ArtifactoryUtilsException();
-		}
-			
-		final Client client = Client.create();
+	public ClientResponse upload(final File pFileToUpload){
 		
 		if(logger.isDebugEnabled()){
 			client.addFilter(new LoggingFilter());
 		}
 		
-		client.addFilter(new com.sun.jersey.api.client.filter.HTTPBasicAuthFilter(pConfig.getUsername(), pConfig.getPassword()));
+		client.addFilter(new com.sun.jersey.api.client.filter.HTTPBasicAuthFilter(this.params.getUsername(), this.params.getPassword()));
  	
-		final WebResource webResource = client.resource(pConfig.getWebResourcePath());			
+		final WebResource webResource = client.resource(this.params.getWebResourcePath());			
 				
 		final ClientResponse clientResponse =  webResource.put(ClientResponse.class, pFileToUpload);
 		
 		final int status = clientResponse.getStatus();
 		
 		if(status != 201){
-			throw new ArtifactoryUtilsException(status,pConfig);
+			throw new ArtifactoryUtilsException(status,this.params);
 		}
 		
 		return clientResponse;
@@ -101,17 +116,14 @@ public final class ArtifactoryUtils {
 	/**
 	 * Delete a file in artifactory
 	 * @param pWebResourcePath artifact's path to delete
-	 * @param pConfig ArtifactoryConfig that contains artifactory configuration.
 	 * @return A jersey ClientResponse object
 	 */
-	public static ClientResponse delete(final String pWebResourcePath, final ArtifactoryConfig pConfig){
-			
-		final Client client = Client.create();
+	public ClientResponse delete(final String pWebResourcePath){
 		
 		if(logger.isDebugEnabled())
 			client.addFilter(new LoggingFilter());
 		
-		client.addFilter(new com.sun.jersey.api.client.filter.HTTPBasicAuthFilter(pConfig.getUsername(), pConfig.getPassword()));			
+		client.addFilter(new com.sun.jersey.api.client.filter.HTTPBasicAuthFilter(this.params.getUsername(), this.params.getPassword()));			
 					
 		final WebResource webResource = client.resource(pWebResourcePath);			
 					

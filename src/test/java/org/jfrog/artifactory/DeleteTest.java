@@ -16,8 +16,8 @@ public class DeleteTest extends ArtifactoryUtilsTest {
 		logger.info("testRegularDelete");		
 		final String workingUrl = getSetting(SettingsKey.ARTIFACTORY_URL)+"/"+getSetting(SettingsKey.REPOSITORY)+"/";
 		logger.debug("WorkingUrl ="+workingUrl);
-		ClientResponse response1 = ArtifactoryUtils.delete(workingUrl+getSetting(SettingsKey.RESOURCE_TO_DELETE), config);
-		ClientResponse response2 = ArtifactoryUtils.delete(workingUrl+getSetting(SettingsKey.WRONG_PATH), config);
+		ClientResponse response1 = artifactoryAPI.delete(workingUrl+getSetting(SettingsKey.RESOURCE_TO_DELETE));
+		ClientResponse response2 = artifactoryAPI.delete(workingUrl+getSetting(SettingsKey.WRONG_PATH));
 		assertEquals(204,response1.getStatus());
 		assertEquals(204,response2.getStatus());
 		

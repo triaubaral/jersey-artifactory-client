@@ -7,6 +7,11 @@ import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.jfrog.artifactory.api.impl.ArtifactoryAPI;
+import org.jfrog.artifactory.param.WrongBasicAuthParamBuilder;
+import org.jfrog.artifactory.param.WrongHomeUrlParamBuilder;
+import org.jfrog.artifactory.param.WrongPathParamBuilder;
+import org.jfrog.artifactory.param.WrongRepositoryParamBuilder;
 import org.junit.AfterClass;
 import org.junit.Test;
 
@@ -18,7 +23,7 @@ public class UploadTest extends ArtifactoryUtilsTest{
 	
 	@Test
 	public void testEmptyFileUpload(){		
-		testUpload(null, config);
+		testUpload(null, artifactoryAPI);
 	}
 	
 	@Test	
@@ -26,9 +31,8 @@ public class UploadTest extends ArtifactoryUtilsTest{
 		
 		logger.info("testWrongHomeUrlFileUpload");
 		
-		try{
-			config.setHomeUrl(getSetting(SettingsKey.WRONG_ARTIFACTORY_URL));		
-			testUpload(testArtifact, config);
+		try{					
+			testUpload(testArtifact, new ArtifactoryAPI(new WrongHomeUrlParamBuilder()));
 			fail("Should have thrown ArtifactoryUtilsException for wrong ARTIFACTORY_URL");
 		}
 		catch(ArtifactoryUtilsException e){
@@ -43,9 +47,8 @@ public class UploadTest extends ArtifactoryUtilsTest{
 		
 		logger.info("testWrongRepositoryFileUpload");
 		
-		try{
-			config.setRepository(getSetting(SettingsKey.WRONG_REPOSITORY));
-			testUpload(testArtifact, config);
+		try{			
+			testUpload(testArtifact, new ArtifactoryAPI(new WrongRepositoryParamBuilder()));
 			fail("Should have thrown ArtifactoryUtilsException for wrong REPOSITORY");
 		}
 		catch(ArtifactoryUtilsException e){
@@ -57,17 +60,15 @@ public class UploadTest extends ArtifactoryUtilsTest{
 	@Test
 	public void testWrongPathFileUpload(){
 		logger.info("testWrongPathFileUpload");
-		config.setPath(getSetting(SettingsKey.WRONG_PATH));
-		testUpload(testArtifact, config);		
+		testUpload(testArtifact, new ArtifactoryAPI(new WrongPathParamBuilder()));		
 		//A path is created at the wrong path and it does not throw any error.		
 	}
 	
 	@Test
 	public void testWrongBasicAuthFileUpload(){
 		logger.info("testWrongBasicAuthFileUpload");
-		try{
-			config.setBasicAuth(getSetting(SettingsKey.WRONG_LOGIN),getSetting(SettingsKey.WRONG_PASSWORD));
-			testUpload(testArtifact, config);
+		try{			
+			testUpload(testArtifact, new ArtifactoryAPI(new WrongBasicAuthParamBuilder()));
 			fail("Should have thrown ArtifactoryUtilsException for wrong LOGIN/PASSWORD");
 		}
 		catch(ArtifactoryUtilsException e){
@@ -77,22 +78,17 @@ public class UploadTest extends ArtifactoryUtilsTest{
 	}
 	
 	@Test
-	public void testEmptyConfigFileUpload(){
-		logger.info("testEmptyConfigFileUpload");
-		try{
-			testUpload(testArtifact, null);
-			fail("Should have thrown ArtifactoryUtilsException for EMPTY CONFIG FILE");
-		}
-		catch(ArtifactoryUtilsException e){
-			assertEquals(0,e.getStatus());
-			logger.info("Expected message error :"+e.getMessage());
-		}
+	public void testRegularUpload() {	
+		logger.info("testRegularUpload");
+		testUpload(testArtifact, artifactoryAPI);
 	}
 	
 	@Test
-	public void testRegularUpload() {	
-		logger.info("testRegularUpload");
-		testUpload(testArtifact, config);
+	public void testCheckSumUpload(){
+		logger.info("testCheckSumUpload");
+		
+		
+		
 	}
 	
 	@AfterClass
@@ -102,9 +98,9 @@ public class UploadTest extends ArtifactoryUtilsTest{
 		
 	}
 	
-	private void testUpload(final File pfile, final ArtifactoryConfig pConfig){		
+	private void testUpload(final File pfile, final ArtifactoryAPI pPartifactoryAPI){		
 		
-		ClientResponse response = ArtifactoryUtils.upload(pfile, pConfig);		
+		ClientResponse response = pPartifactoryAPI.upload(pfile);		
 		assertEquals(201,response.getStatus());		
 	}	
 	

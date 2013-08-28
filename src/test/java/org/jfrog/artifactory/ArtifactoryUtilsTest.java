@@ -8,6 +8,9 @@ import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.jfrog.artifactory.api.impl.ArtifactoryAPI;
+import org.jfrog.artifactory.param.DefautParameterBuilder;
+import org.jfrog.artifactory.param.Parameter;
 import org.junit.Before;
 
 public abstract class ArtifactoryUtilsTest {
@@ -18,7 +21,7 @@ public abstract class ArtifactoryUtilsTest {
 	
 	protected String username;
 	protected String password;
-	protected ArtifactoryConfig config;
+	protected ArtifactoryAPI artifactoryAPI;
 	protected Properties settings; 
 	protected enum SettingsKey{
 		ARTIFACTORY_URL,
@@ -60,13 +63,12 @@ public abstract class ArtifactoryUtilsTest {
 		password = getSetting(SettingsKey.PASSWORD);
 		
 		logger.info("ArtifactoryConfig object intialisation");
-		config = new ArtifactoryConfig();		
-		config.setHomeUrl(getSetting(SettingsKey.ARTIFACTORY_URL));		
-		config.setRepository(getSetting(SettingsKey.REPOSITORY));
-		config.setPath(getSetting(SettingsKey.PATH));
-		config.setBasicAuth(username, password);		
 		
-		logger.debug(config);
+		
+		//Parameter params = ;		
+		artifactoryAPI = new ArtifactoryAPI(new DefautParameterBuilder());		
+		
+		logger.debug(artifactoryAPI);
 		
 	}
 	
