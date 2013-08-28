@@ -6,6 +6,6 @@ public class WrongHomeUrlParamBuilder extends DefautParameterBuilder {
 
 	@Override
 	public void buildHomeUrl() {
-		parameter.setHomeUrl("http://localhost/");
+		parameter.setHomeUrl(settingsLoader.getSetting(SettingsKey.WRONG_ARTIFACTORY_URL));
 	}
 }

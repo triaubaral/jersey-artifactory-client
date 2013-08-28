@@ -5,7 +5,7 @@ import org.jfrog.artifactory.param.DefautParameterBuilder;
 public class WrongUsernameParamBuilder extends DefautParameterBuilder {
 	@Override
 	public void buildUsername() {
-		parameter.setUsername("wrongusername");
+		parameter.setUsername(settingsLoader.getSetting(SettingsKey.WRONG_LOGIN));
 	}
 
 }

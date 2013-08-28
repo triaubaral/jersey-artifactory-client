@@ -4,6 +4,10 @@ public abstract class ParameterBuilder {
 
 	protected Parameter parameter;
 	
+	public ParameterBuilder() {
+		
+	}
+	
 	public Parameter getParameter(){		
 		return parameter;
 	}

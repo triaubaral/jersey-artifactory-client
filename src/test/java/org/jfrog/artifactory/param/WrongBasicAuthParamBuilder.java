@@ -6,12 +6,12 @@ public class WrongBasicAuthParamBuilder extends DefautParameterBuilder {
 	
 	@Override
 	public void buildUsername() {
-		parameter.setUsername("wrongusername");
+		parameter.setUsername(settingsLoader.getSetting(SettingsKey.WRONG_LOGIN));
 	}
 	
 	@Override
 	public void buildPassword() {
-		parameter.setPassword("wrongpassword");
+		parameter.setPassword(settingsLoader.getSetting(SettingsKey.WRONG_PASSWORD));
 	}
 
 }

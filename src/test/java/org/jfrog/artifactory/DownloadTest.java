@@ -8,6 +8,7 @@ import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.jfrog.artifactory.param.SettingsKey;
 import org.junit.Test;
 
 public class DownloadTest extends ArtifactoryUtilsTest {
@@ -19,7 +20,7 @@ public class DownloadTest extends ArtifactoryUtilsTest {
 		logger.info("testUnknwownArtifactDownload");
 		try{
 		
-			doDownload(getWebResourcePath()+"/"+getSetting(SettingsKey.WRONG_PATH)+"*è/''");
+			doDownload(getWebResourcePath()+"/"+settingsLoader.getSetting(SettingsKey.WRONG_PATH)+"*è/''");
 			fail("Should have thrown ArtifactoryUtilsException for ARTIFACT NOT FOUND");
 		}
 		catch(ArtifactoryUtilsException e){
@@ -42,7 +43,7 @@ public class DownloadTest extends ArtifactoryUtilsTest {
 	private File doDownload(final String pWebResoucePath){
 		final String pathWebResouce = pWebResoucePath;
 		
-		final File fileDestination = new File(getSetting(SettingsKey.OUTPUT_JAR));
+		final File fileDestination = new File(settingsLoader.getSetting(SettingsKey.OUTPUT_JAR));
 		
 		if(fileDestination.exists())
 			FileUtils.deleteQuietly(fileDestination);
@@ -52,7 +53,7 @@ public class DownloadTest extends ArtifactoryUtilsTest {
 	}
 	
 	private String getWebResourcePath(){
-		final String webResourcePath =  getSetting(SettingsKey.ARTIFACTORY_URL)+"/"+getSetting(SettingsKey.REPOSITORY)+"/"+getSetting(SettingsKey.PATH);
+		final String webResourcePath =  settingsLoader.getSetting(SettingsKey.ARTIFACTORY_URL)+"/"+settingsLoader.getSetting(SettingsKey.REPOSITORY)+"/"+settingsLoader.getSetting(SettingsKey.PATH);
 		logger.debug("Get WebResourcePath :"+webResourcePath);
 		return webResourcePath;
 	}

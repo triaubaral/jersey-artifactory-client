@@ -11,6 +11,8 @@ import org.apache.log4j.Logger;
 import org.jfrog.artifactory.api.impl.ArtifactoryAPI;
 import org.jfrog.artifactory.param.DefautParameterBuilder;
 import org.jfrog.artifactory.param.Parameter;
+import org.jfrog.artifactory.param.SettingsKey;
+import org.jfrog.artifactory.param.SettingsLoader;
 import org.junit.Before;
 
 public abstract class ArtifactoryUtilsTest {
@@ -22,45 +24,25 @@ public abstract class ArtifactoryUtilsTest {
 	protected String username;
 	protected String password;
 	protected ArtifactoryAPI artifactoryAPI;
-	protected Properties settings; 
-	protected enum SettingsKey{
-		ARTIFACTORY_URL,
-		INPUT_JAR,
-		USERNAME,
-		PASSWORD,
-		REPOSITORY,
-		PATH,
-		WRONG_ARTIFACTORY_URL,
-		WRONG_REPOSITORY,
-		WRONG_PATH,
-		WRONG_LOGIN,
-		WRONG_PASSWORD,
-		RESOURCE_TO_DELETE,
-		OUTPUT_JAR;		
-	}
+	//protected Properties settings; 
+	protected static SettingsLoader settingsLoader = new SettingsLoader();
+	
 	
 	@Before
 	public void init(){
 		
-		logger.info("Settings intialisation");
-		
-		settings = new Properties();
-		try {
-			settings.load(this.getClass().getResourceAsStream("/settings.properties"));
-		} catch (IOException e) {
-			logger.error(e.getStackTrace());
-		}
+		logger.info("Settings intialisation");		
 		
 		if(logger.isDebugEnabled()){
-			showParameters();
+			settingsLoader.showParameters();
 		}
 		
-		testArtifact = new File(getSetting(SettingsKey.OUTPUT_JAR));		
+		testArtifact = new File(settingsLoader.getSetting(SettingsKey.OUTPUT_JAR));		
 		
-		initFile(testArtifact, getSetting(SettingsKey.INPUT_JAR));
+		initFile(testArtifact, settingsLoader.getSetting(SettingsKey.INPUT_JAR));
 		  
-		username = getSetting(SettingsKey.USERNAME);
-		password = getSetting(SettingsKey.PASSWORD);
+		username = settingsLoader.getSetting(SettingsKey.USERNAME);
+		password = settingsLoader.getSetting(SettingsKey.PASSWORD);
 		
 		logger.info("ArtifactoryConfig object intialisation");
 		
@@ -72,18 +54,6 @@ public abstract class ArtifactoryUtilsTest {
 		
 	}
 	
-	protected String getSetting(final SettingsKey pKey){	
-		logger.debug("Get setting for key :"+pKey);
-		return settings.getProperty(pKey.name());
-	}
-
-	protected void showParameters(){
-		logger.debug("====== Properties from settings.properties =====");
-		for(Entry<Object, Object> property : this.settings.entrySet()){
-			logger.debug(property.getKey()+"="+property.getValue());
-		}
-		logger.debug("================================================");
-	}
 	
 	private void initFile(final File pFileToFill, final String pPathInputStream){
 		

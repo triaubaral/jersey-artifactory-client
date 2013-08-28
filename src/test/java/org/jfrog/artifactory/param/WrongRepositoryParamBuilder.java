@@ -6,7 +6,7 @@ public class WrongRepositoryParamBuilder extends DefautParameterBuilder {
 	
 	@Override
 	public void buildRepository() {
-		parameter.setRepository("wrongrepository");
+		parameter.setRepository(settingsLoader.getSetting(SettingsKey.WRONG_REPOSITORY));
 	}
 
 }

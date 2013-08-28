@@ -6,6 +6,6 @@ public class WrongPathParamBuilder extends DefautParameterBuilder {
 
 	@Override
 	public void buildPath() {
-		parameter.setPath("wrongpath");
+		parameter.setPath(settingsLoader.getSetting(SettingsKey.WRONG_PATH));
 	}
 }
