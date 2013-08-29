@@ -8,12 +8,12 @@ import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.jfrog.artifactory.api.impl.ArtifactoryAPI;
+import org.jfrog.artifactory.api.impl.ArtifactoryAPIImpl;
 import org.jfrog.artifactory.param.SettingsKey;
 import org.jfrog.artifactory.param.WrongPathParamBuilder;
 import org.junit.Test;
 
-public class ExportTest extends ArtifactoryUtilsTest {
+public class ExportTest extends ArtifactoryAPITest {
 
 	private static Logger logger = Logger.getLogger(ExportTest.class);
 	
@@ -21,8 +21,8 @@ public class ExportTest extends ArtifactoryUtilsTest {
 	public void testUnknwownArtifactDownload(){
 		logger.info("testUnknwownArtifactDownload");
 		try{
-			final ArtifactoryAPI artifactoryAPI = new ArtifactoryAPI(new WrongPathParamBuilder());
-			artifactoryAPI.delete(artifactoryAPI.getParams().getWebResourcePath());									
+			final ArtifactoryAPIImpl artifactoryAPI = new ArtifactoryAPIImpl(new WrongPathParamBuilder());
+			artifactoryAPI.delete();									
 			doDownload(artifactoryAPI);
 			fail("Should have thrown ArtifactoryUtilsException for ARTIFACT NOT FOUND");
 		}
@@ -43,7 +43,7 @@ public class ExportTest extends ArtifactoryUtilsTest {
 	}
 	
 	
-	private File doDownload(final ArtifactoryAPI pArtifactoryAPI){
+	private File doDownload(final ArtifactoryAPIImpl pArtifactoryAPI){
 		
 		
 		final File fileDestination = new File(settingsLoader.getSetting(SettingsKey.OUTPUT_JAR));
