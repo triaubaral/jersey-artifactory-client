@@ -1,5 +1,8 @@
 package org.jfrog.artifactory.param;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DefautParameterBuilder extends ParameterBuilder {
 	
 	protected SettingsLoader settingsLoader = new SettingsLoader();	
@@ -32,7 +35,21 @@ public class DefautParameterBuilder extends ParameterBuilder {
 
 	@Override
 	public void buildHeaders() {
-		parameter.setPassword(settingsLoader.getSetting(SettingsKey.HEADERS));
+		String headerStr = settingsLoader.getSetting(SettingsKey.HEADERS);
+		
+		Map<String,String> params = new HashMap<String,String>();
+		
+		String[] paramHeader = headerStr.split(",");
+		
+		for(String param : paramHeader){
+			
+			String[] keyValue = param.split(":");
+			
+			params.put(keyValue[0], keyValue[1]);
+			
+		}
+		
+		parameter.setHeaders(params);
 		
 	}
 
