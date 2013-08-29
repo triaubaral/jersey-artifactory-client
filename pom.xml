@@ -48,7 +48,7 @@
 	    <snapshotRepository>
 	        <id>aurelien-SATELLITE-C870-133</id>
 	        <name>aurelien-SATELLITE-C870-133-snapshots</name>
-	        <url>http://localhost:8081/artifactory/libs-snapshot-local</url>
+	        <url>http://localhost:8081/artifactory/libs-release-local</url>
 	    </snapshotRepository>
 	</distributionManagement>
 
