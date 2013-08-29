@@ -3,7 +3,7 @@
   <name>jersey-artifactory-client</name>
   <groupId>fr.cnamts</groupId>
   <artifactId>jersey-artifactory-client</artifactId>
-  <version>1.0.0-RELEASE</version>
+  <version>0.0.3-SNAPSHOT</version>
   <description>Simple  jersey client for artifactory</description>
   <dependencies>
 	  <dependency>
@@ -48,7 +48,7 @@
 	    <snapshotRepository>
 	        <id>aurelien-SATELLITE-C870-133</id>
 	        <name>aurelien-SATELLITE-C870-133-snapshots</name>
-	        <url>http://localhost:8081/artifactory/libs-release-local</url>
+	        <url>http://localhost:8081/artifactory/libs-snapshot-local</url>
 	    </snapshotRepository>
 	</distributionManagement>
 
