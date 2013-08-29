@@ -3,7 +3,7 @@
   <name>jersey-artifactory-client</name>
   <groupId>fr.cnamts</groupId>
   <artifactId>jersey-artifactory-client</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.3-SNAPSHOT</version>
   <description>Simple  jersey client for artifactory</description>
   <dependencies>
 	  <dependency>
