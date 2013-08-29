@@ -4,10 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.apache.log4j.Logger;
-import org.jfrog.artifactory.param.SettingsKey;
+import org.jfrog.artifactory.api.impl.ArtifactoryAPIImpl;
+import org.jfrog.artifactory.param.ResourceToDelParameterBuilder;
+import org.jfrog.artifactory.param.WrongResourceToDelParameterBuilder;
 import org.junit.Test;
 
-public class DeleteTest extends ArtifactoryUtilsTest {
+public class DeleteTest extends ArtifactoryAPITest {
 	
 	private static Logger logger = Logger.getLogger(DeleteTest.class);
 	
@@ -16,9 +18,7 @@ public class DeleteTest extends ArtifactoryUtilsTest {
 		try{
 			
 			logger.info("testRegularDelete");		
-			final String workingUrl = settingsLoader.getSetting(SettingsKey.ARTIFACTORY_URL)+"/"+settingsLoader.getSetting(SettingsKey.REPOSITORY)+"/";
-			logger.debug("WorkingUrl ="+workingUrl);
-			artifactoryAPI.delete(workingUrl+settingsLoader.getSetting(SettingsKey.RESOURCE_TO_DELETE));			
+			doDelete(new ArtifactoryAPIImpl(new ResourceToDelParameterBuilder()));			
 		}
 		catch(Exception e){
 			fail("Exception for regular download has been thrown.");			
@@ -30,14 +30,17 @@ public class DeleteTest extends ArtifactoryUtilsTest {
 		try{
 			
 			logger.info("testWrongArtifactDelete");		
-			final String workingUrl = settingsLoader.getSetting(SettingsKey.ARTIFACTORY_URL)+"/"+settingsLoader.getSetting(SettingsKey.REPOSITORY)+"/";
-			logger.debug("WorkingUrl ="+workingUrl);
-			artifactoryAPI.delete(workingUrl+settingsLoader.getSetting(SettingsKey.RESOURCE_TO_DELETE)+"iioi");
+			doDelete(new ArtifactoryAPIImpl(new WrongResourceToDelParameterBuilder()));
 			fail("Artifact has not been deleted");
 		}
 		catch(ArtifactoryUtilsException e){
 			assertEquals(404,e.getStatus());			
 		}		
+	}
+	
+	private void doDelete(final ArtifactoryAPIImpl artifactoryAPI){
+		
+		artifactoryAPI.delete();
 	}
 	
 
