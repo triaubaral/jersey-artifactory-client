@@ -2,10 +2,7 @@
 
 Simple jersey client for artifactory
 
-* * *
-*Warning* : This version is a *snapshot*.
-* * *
-You can only use it to download, update or delete an artifact.
+You can only use it to download (exportTo), update(importFrom) or delete an artifact.
 
 Here a simple example in order to show you how it works
 
@@ -50,15 +47,15 @@ Then you need to set an ArtifactoryAPI object :
 Then you can use the ArtifactoryAPI to :
 
 	//dowload :
-	artifactoryAPI.download("path/artifact/to/download", new File("path/to/downloaded/file"));
+	artifactoryAPI.exportTo(new File("path/to/downloaded/file"));
 	
 	
 	//upload :
-	artifactoryAPI.upload(new File("path/to/file/to/upload"));
+	artifactoryAPI.importFrom(new File("path/to/file/to/upload"));
 	
 	
-	//delete :
-	artifactoryAPI.delete("path/to/file/to/delete");
+	//delete resource defined in buildPath from DefautParameterBuilder:
+	artifactoryAPI.delete();
 * * *
 *Have a look to the unit test to get more example.*
 
