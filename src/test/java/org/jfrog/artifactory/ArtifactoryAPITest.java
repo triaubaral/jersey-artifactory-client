@@ -42,8 +42,10 @@ public abstract class ArtifactoryAPITest {
 		
 		logger.info("ArtifactoryConfig object intialisation");		
 				
-		artifactoryAPI = new ArtifactoryAPIImpl(new DefautParameterBuilder());		
+		artifactoryAPI = new ArtifactoryAPIImpl(new DefautParameterBuilder());	
 		
+		artifactoryAPI.importFrom(testArtifact);
+	
 		logger.debug(artifactoryAPI);
 		
 	}
