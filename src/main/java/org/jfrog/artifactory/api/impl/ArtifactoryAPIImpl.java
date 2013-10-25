@@ -42,9 +42,12 @@ public final class ArtifactoryAPIImpl implements ArtifactoryAPI<File> {
 		pParameterBuilder.buildHeaders();
 		this.params = pParameterBuilder.getParameter();
 	}
-		
+	
+	
+	private static Client client;
+	
 	static{
-		
+		client = Client.create();
 		//Remove all jersey logging strategy with java.util.logging 
 		//then it will be manage by log4j.
 		SLF4JBridgeHandler.removeHandlersForRootLogger();
@@ -60,7 +63,7 @@ public final class ArtifactoryAPIImpl implements ArtifactoryAPI<File> {
 	 */
 	public File exportTo(final File pFileDestination){
 		
-		final Client client = initLogIfDebugEnabled();		
+		initLogIfDebugEnabled();
 		
 		final WebResource webResource = client.resource(params.getWebResourcePath());
  
@@ -88,7 +91,7 @@ public final class ArtifactoryAPIImpl implements ArtifactoryAPI<File> {
 	 */
 	public void importFrom(final File pFileToUpload){
 		
-		final Client client = initLogIfDebugEnabled();		
+		initLogIfDebugEnabled();
 		
 		client.addFilter(new com.sun.jersey.api.client.filter.HTTPBasicAuthFilter(this.params.getUsername(), this.params.getPassword()));
  	
@@ -114,7 +117,7 @@ public final class ArtifactoryAPIImpl implements ArtifactoryAPI<File> {
 	 */
 	public void delete(){
 		
-		final Client client = initLogIfDebugEnabled();
+		initLogIfDebugEnabled();
 		
 		client.addFilter(new com.sun.jersey.api.client.filter.HTTPBasicAuthFilter(this.params.getUsername(), this.params.getPassword()));			
 					
@@ -134,13 +137,10 @@ public final class ArtifactoryAPIImpl implements ArtifactoryAPI<File> {
 		return params;
 	}
 	
-	private Client initLogIfDebugEnabled(){
-		final Client client = Client.create();
+	private void initLogIfDebugEnabled(){
 		if(logger.isDebugEnabled()){
 			client.addFilter(new LoggingFilter());
 		}
-		
-		return client;
 	}
 
 }

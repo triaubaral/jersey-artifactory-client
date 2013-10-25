@@ -24,20 +24,14 @@ public class ImportTest extends ArtifactoryAPITest{
 		testUpload(null, artifactoryAPI);
 	}
 	
-	@Test	
+	@Test(expected=com.sun.jersey.api.client.ClientHandlerException.class)	
 	public void testWrongHomeUrlFileUpload(){	
 		
-		logger.info("testWrongHomeUrlFileUpload");
-		
-		try{					
-			testUpload(testArtifact, new ArtifactoryAPIImpl(new WrongHomeUrlParamBuilder()));
-			fail("Should have thrown ArtifactoryUtilsException for wrong ARTIFACTORY_URL");
-		}
-		catch(ArtifactoryUtilsException e){
-			assertEquals(405,e.getStatus());
-			logger.info("Expected message error :"+e.getStatus() +" "+ e.getMessage());
-		}
-		
+		logger.info("testWrongHomeUrlFileUpload");		
+							
+		testUpload(testArtifact, new ArtifactoryAPIImpl(new WrongHomeUrlParamBuilder()));
+		fail("Should have thrown com.sun.jersey.api.client.ClientHandlerException for wrong ARTIFACTORY_URL");
+			
 	}
 	
 	@Test
